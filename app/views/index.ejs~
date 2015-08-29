@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	    <!--%= title % is rendered by the value of title in users.server.controller.js file-->
 		<title><%= title %></title>
 	</head>
 	<body>

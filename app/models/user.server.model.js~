@@ -1,7 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
-    
-//Creates the schema for a user include information fields
+
 var UserSchema = new Schema({
 
 	firstName: String,
@@ -10,24 +9,19 @@ var UserSchema = new Schema({
 
 	email: {
 		type: String,
-		//index allows for a secondary index or key
 		index: true,
-		//regex expression to match a valid email address such as name@example.com
 		match: /.+\@.+\..+/
 	},
 
 	username: {
 		type:String,
-		// trim clears leading and trailing whitespace
 		trim: true,
-		// unique allows username to be the unique index or primary key sort of
 		unique: true,
 		required: true
 	},
 
 	password: {
 		type: String,
-		//validate allows for a customizable validator; in this case, forces the password field to be 6 characters or longer
 		validate: [
 			function(password) {
 				return password.length >= 6;
@@ -43,10 +37,9 @@ var UserSchema = new Schema({
 
 	role: {
 		type: String,
-		//enum allows the role to be only Admin, Owner, or User
 		enum: ['Admin', 'Owner', 'User']
 	},
-	//website allows the url to have http if not already
+	
 	website: {
 		type: String,
 		get: function(url) {
@@ -66,7 +59,6 @@ var UserSchema = new Schema({
 	
 });
 
-//Virtual attribute to create a fullname by finding and using the first and last name; also breaks apart full name
 UserSchema.virtual('fullName').get(function() {
 
 	return this.firstName + ' ' + this.lastName;

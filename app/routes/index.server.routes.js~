@@ -2,9 +2,9 @@
 
 module.exports = function(app) {
     
-    //path for the controller of the index page to locate and use it
+    //route or path for the controller of the index page
 	var index = require('../controllers/index.server.controller');
 	
-	//creates the index page url and route
+	//creates the index page url
 	app.get('/', index.render);
 };

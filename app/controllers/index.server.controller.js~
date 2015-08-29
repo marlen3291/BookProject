@@ -9,7 +9,7 @@ exports.render = function(req, res) {
 
 	req.session.lastVisit = new Date();
 
-    //Renders the index page with the title injected into index.ejs; the 'index' part refers to the index.ejs file in the views folder
+    //Renders the index page with the title injected into index.ejs
 	res.render('index', {
 		title: 'Hello World'
 	})

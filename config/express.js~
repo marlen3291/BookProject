@@ -1,4 +1,3 @@
-//Sets up node modules
 var config = require('./config'),
     express = require('express'),
     morgan = require('morgan'),
@@ -10,7 +9,6 @@ var config = require('./config'),
 module.exports = function(){
 	var app = express();
 	
-	//Use morgan or compress based if project is being developed or used
 	if (process.env.NODE_ENV === 'development') {
 	    app.use(morgan('dev'));
 	} else if (process.env.NODE_ENV === 'production'){
@@ -29,15 +27,12 @@ module.exports = function(){
 		secret: config.sessionSecret
 	}));
 	
-	//specific path to the views 
+	
 	app.set('views', './app/views');
-	//set the view type to be ejs instead of jade or html
 	app.set('view engine', 'ejs');
-    
-    //specifies path to route.js files
+
 	require('../app/routes/index.server.routes.js')(app);
 	require('../app/routes/users.server.routes.js')(app);
-	//enables static elements by specifiying path to public
 	app.use(express.static('./public'));
 
 	return app;
