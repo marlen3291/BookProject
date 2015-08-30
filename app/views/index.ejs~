@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	    <!--%= title % is rendered by the value of title in users.server.controller.js file-->
 		<title><%= title %></title>
 	</head>
 	<body>
+		<% if ( userFullName ) { %>
+			<h2>Hello <%=userFullName%> </h2>
+			<a href="/signout">Sign out</a>
+		<% } else { %>
+			<a href="/signup"><Signup</a>
+			<a href="/signin">Signin</a>
+		<% } %>
+		<br>
 		<img src="img/MonsterHunterBackground.jpg" alt="Logo">
 		<h1><%= title %></h1>
 	</body>

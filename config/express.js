@@ -4,8 +4,10 @@ var config = require('./config'),
     morgan = require('morgan'),
     compress = require('compression'),
     bodyParser = require('body-parser'),
-    methodOverride = require('method-override');
-    session = require('express-session');
+    methodOverride = require('method-override'),
+    session = require('express-session'),
+    flash = require('connect-flash'),
+    passport = require('passport');
 
 module.exports = function(){
 	var app = express();
@@ -33,6 +35,11 @@ module.exports = function(){
 	app.set('views', './app/views');
 	//set the view type to be ejs instead of jade or html
 	app.set('view engine', 'ejs');
+	
+	app.use(flash());
+	//Allows passport module use in express	
+	app.use(passport.initialize());
+	app.use(passport.session());
     
     //specifies path to route.js files
 	require('../app/routes/index.server.routes.js')(app);

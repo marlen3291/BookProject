@@ -1,6 +1,8 @@
 var mongoose = require('mongoose'),
+    crypto = require('crypto'),
     Schema = mongoose.Schema;
-
+    
+//Creates the schema for a user include information fields
 var UserSchema = new Schema({
 
 	firstName: String,
@@ -9,26 +11,46 @@ var UserSchema = new Schema({
 
 	email: {
 		type: String,
+		//index allows for a secondary index or key
 		index: true,
-		match: /.+\@.+\..+/
+
+//regex expression to match a valid email address such as name@example.com
+		match: [/.+\@.+\..+/, "Please fill a valid e-mail address"]
 	},
 
 	username: {
 		type:String,
+		// trim clears leading and trailing whitespace
 		trim: true,
+		// unique allows username to be the unique index or primary key sort of
 		unique: true,
-		required: true
+		required: 'Username is required'
 	},
 
 	password: {
 		type: String,
+		//validate allows for a customizable validator; in this case, forces the password field to be 6 characters or longer
 		validate: [
 			function(password) {
-				return password.length >= 6;
-		},
-		'Password should be longer'
+				return password && password.length >= 6;
+		}, 'Password should be longer'
 		]
 	},
+	
+	salt: {
+
+		type: String
+	
+	},
+
+	provider: {
+		
+		type: String,
+		required: 'Provider is required'
+	},
+
+	providerId: String,
+	providerData: {},
 
 	created: {
 		type: Date,
@@ -37,9 +59,10 @@ var UserSchema = new Schema({
 
 	role: {
 		type: String,
+		//enum allows the role to be only Admin, Owner, or User
 		enum: ['Admin', 'Owner', 'User']
 	},
-	
+	//website allows the url to have http if not already
 	website: {
 		type: String,
 		get: function(url) {
@@ -59,6 +82,7 @@ var UserSchema = new Schema({
 	
 });
 
+//Virtual attribute to create a fullname by finding and using the first and last name; also breaks apart full name
 UserSchema.virtual('fullName').get(function() {
 
 	return this.firstName + ' ' + this.lastName;
@@ -69,5 +93,76 @@ UserSchema.virtual('fullName').get(function() {
 					this.lastName = slitName[1] || '';
 });
 
-UserSchema.set('toJSON', {getters: true, virtuals: true });
+ UserSchema.pre('save', function(next) {
+      if (this.password && this.password.length > 6) {
+        this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+        this.password = this.hashPassword(this.password);
+      }
+
+      next();
+    });
+  
+  UserSchema.methods.hashPassword = function(password) {
+   if (this.salt && password) {
+        return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
+    } else {
+        return password;
+    }
+};
+/*
+UserSchema.pre('save', function(next) {
+	if (this.password) {
+
+		this.salt = new
+		Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+		this.password = this.hashPassword(this.password);
+	}
+	next();
+});
+
+UserSchema.methods.hashPassword = function(password) {
+
+return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
+
+};
+*/
+UserSchema.methods.authenticate = function(password) {
+	return this.password === this.hashPassword(password);
+};
+
+UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
+	
+	var _this = this;
+	var possibleUsername = username + (suffix || '');
+
+	_this.findOne({
+		username: possibleUsername
+	}, function(err, user) {
+	if(!err) {
+			
+		if(!user) {
+			
+			callback(possibleUsername);
+		}
+		
+		else{
+
+	return _this.findUniqueUsername(username, (suffix || 0 ) + 1, callback);
+	
+		}
+
+	} else {
+		
+		callback(null);
+		
+		}
+
+	});
+};
+
+UserSchema.set('toJSON', {
+	getters: true, 
+	virtuals: true 
+});
+
 mongoose.model('User', UserSchema);

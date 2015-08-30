@@ -1,9 +1,25 @@
 
 //path to the users server controller
-var users = require('../../app/controllers/users.server.controller');
+var users = require('../../app/controllers/users.server.controller'),
+    passport = require('passport');
 
 //
 module.exports = function(app){
+
+	app.route('/signup')
+		.get(users.renderSignup)
+		.post(users.signup);
+
+	app.route('/signin')
+		.get(users.renderSignin)
+		.post(passport.authenticate('local', {
+			successRedirect: '/',
+			failureRedirect: '/signin',
+			failureFlash: true
+		}));
+	app.get('/signout', users.signout);
+
+
     //Makes the route and url for the users page and includes methods
 	app.route('/users')
 	//Creates users
@@ -23,4 +39,5 @@ module.exports = function(app){
     
     //Turns the :userId into the user's userByID field in the database 
 	app.param('userId', users.userByID);
+
 };

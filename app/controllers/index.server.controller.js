@@ -11,6 +11,7 @@ exports.render = function(req, res) {
 
     //Renders the index page with the title injected into index.ejs; the 'index' part refers to the index.ejs file in the views folder
 	res.render('index', {
-		title: 'Hello World'
-	})
+		title: 'Hello World',
+		userFullName: req.user ? req.user.fullName : ''
+	});
 };
