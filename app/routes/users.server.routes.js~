@@ -19,7 +19,7 @@ module.exports = function(app){
 		}));
 	app.get('/signout', users.signout);
 
-/*
+
     //Makes the route and url for the users page and includes methods
 	app.route('/users')
 	//Creates users
@@ -27,7 +27,7 @@ module.exports = function(app){
 	//Retrieves a list of users
 	   .get(users.list);
 	   
-    //Makes the route andurl for the user's id page and includes its methods
+    //Makes the route and url for the user's id page and includes its methods
 	app.route('/users/:userId')
 	//Gets specific user's information
 	   .get(users.read)
@@ -39,5 +39,18 @@ module.exports = function(app){
     
     //Turns the :userId into the user's userByID field in the database 
 	app.param('userId', users.userByID);
-*/
+
+	app.get('/oauth/facebook', passport.authenticate('facebook', {
+		
+		scope: [ 'email' ],
+		failureRedirect: '/signin'
+	}));
+
+	app.get('/oauth/facebook/callback', passport.authenticate('facebook',
+	{
+	    scope: [ 'email' ],
+		failureRedirect: '/signin',
+		successRedirect: '/'
+	}));
+	
 };
