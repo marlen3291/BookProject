@@ -7,6 +7,7 @@ module.exports = function() {
 	
 	//refers to the model used
 	require('../app/models/user.server.model');
+	require('../app/models/article.server.model');
 
 	return db;
 };

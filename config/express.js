@@ -44,6 +44,7 @@ module.exports = function(){
     //specifies path to route.js files
 	require('../app/routes/index.server.routes.js')(app);
 	require('../app/routes/users.server.routes.js')(app);
+	require('../app/routes/articles.server.routes.js')(app);
 	//enables static elements by specifiying path to public
 	app.use(express.static('./public'));
 
